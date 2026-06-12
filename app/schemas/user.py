@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr
+import uuid
 
 
 class UserBase(BaseModel):
@@ -10,3 +11,8 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+
+
+class UserOut(UserBase):
+    id: uuid.UUID
+    model_config = {"from_attributes": True}

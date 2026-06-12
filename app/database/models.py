@@ -6,7 +6,7 @@ from typing import List
 
 
 def get_now():
-    return datetime.now(timezone.utc)
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 class User(SQLModel, table=True):
@@ -34,6 +34,6 @@ class RefreshToken(SQLModel, table=True):
     expires_at: datetime = Field(nullable=False)
     revoked: bool = Field(default=False)
     created_at: datetime = Field(default_factory=get_now)
-    
+
     # Relationship
     user: "User" = Relationship(back_populates="refresh_tokens")
