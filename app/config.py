@@ -19,4 +19,14 @@ class DatabaseSettings(BaseSettings):
         return f"postgresql+asyncpg://{self.DATABASE_USER}:{self.DATABASE_PASSWORD}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}"
 
 
+class SecuritySettings(BaseSettings):
+    JWT_SECRET: str
+    JWT_ALGORITHM: str
+    JWT_ACCESS_TOKEN_TIME_MIN: int
+    JWT_REFRESH_TOKEN_TIME_DAY: int
+
+    model_config = _base_config
+
+
 db_settings = DatabaseSettings()
+security_settings = SecuritySettings()

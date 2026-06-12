@@ -1,3 +1,4 @@
+from sqlalchemy import DateTime
 from sqlmodel import SQLModel, Field, Relationship
 from pydantic import EmailStr
 from datetime import datetime, timezone
@@ -6,7 +7,7 @@ from typing import List
 
 
 def get_now():
-    return datetime.now(timezone.utc).replace(tzinfo=None)
+    return datetime.now(timezone.utc)
 
 
 class User(SQLModel, table=True):
@@ -18,8 +19,12 @@ class User(SQLModel, table=True):
     is_active: bool = Field(default=True)
     is_admin: bool = Field(default=False)
     is_verified: bool = Field(default=False)
-    created_at: datetime = Field(default_factory=get_now)
-    updated_at: datetime = Field(default_factory=get_now)
+    created_at: datetime = Field(
+        default_factory=get_now, sa_type=DateTime(timezone=True)
+    )
+    updated_at: datetime = Field(
+        default_factory=get_now, sa_type=DateTime(timezone=True)
+    )
 
     # Relationship
     refresh_tokens: List["RefreshToken"] = Relationship(back_populates="user")
@@ -31,9 +36,11 @@ class RefreshToken(SQLModel, table=True):
     id: uuid.UUID | None = Field(primary_key=True, default_factory=uuid.uuid4)
     user_id: uuid.UUID = Field(foreign_key="users.id", ondelete="CASCADE")
     token: str = Field(max_length=255, nullable=False)
-    expires_at: datetime = Field(nullable=False)
+    expires_at: datetime = Field(nullable=False, sa_type=DateTime(timezone=True))
     revoked: bool = Field(default=False)
-    created_at: datetime = Field(default_factory=get_now)
+    created_at: datetime = Field(
+        default_factory=get_now, sa_type=DateTime(timezone=True)
+    )
 
     # Relationship
     user: "User" = Relationship(back_populates="refresh_tokens")
