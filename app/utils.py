@@ -1,7 +1,9 @@
+from fastapi import HTTPException, status
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from app.config import security_settings
-from jose import jwt
+from jose import jwt, JWTError, ExpiredSignatureError
+from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database.models import User, RefreshToken
 import uuid
@@ -54,3 +56,41 @@ async def create_tokens(session: AsyncSession, user: User):
         "refresh_token": refresh_token_str,
         "token_type": "bearer",
     }
+
+
+def decode_token(token: str):
+    try:
+        return jwt.decode(
+            token,
+            key=security_settings.JWT_SECRET,
+            algorithms=[security_settings.JWT_ALGORITHM],
+        )
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired!"
+        )
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Token!"
+        )
+
+
+async def verify_refresh_token(session: AsyncSession, token: str):
+    statement = await session.execute(
+        select(RefreshToken).where(RefreshToken.token == token)
+    )
+    db_refresh_token = statement.scalar_one_or_none()
+    if db_refresh_token and not db_refresh_token.revoked:
+        expires_at = db_refresh_token.expires_at
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+
+        if expires_at > datetime.now(timezone.utc):
+            user_statement = statement = await session.execute(
+                select(User).where(User.id == db_refresh_token.id)
+            )
+
+            user = user_statement.scalar_one_or_none()
+            return user
+
+    return None
