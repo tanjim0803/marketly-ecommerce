@@ -70,6 +70,8 @@ async def refresh_token(session: SessionDep, request: Request):
         )
 
     user = await verify_refresh_token(session, token)
+    
+    print(f"===========================DB REFRESH_TOKEN Route: {user}")
 
     if not user:
         raise HTTPException(
@@ -99,3 +101,13 @@ async def refresh_token(session: SessionDep, request: Request):
     )
 
     return response
+
+
+@user_router.post("/send-verification-email")
+async def send_verification_email(user: Annotated[User, Depends(get_current_user)]):
+    return await user_service.email_verification_send(user)
+
+
+@user_router.get("/verify-email")
+async def verify_email(session: SessionDep, token: str):
+    return await user_service.verify_email_token(session, token)

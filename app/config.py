@@ -25,6 +25,8 @@ class SecuritySettings(BaseSettings):
     JWT_ACCESS_TOKEN_TIME_MIN: int
     JWT_REFRESH_TOKEN_TIME_DAY: int
 
+    EMAIL_VERIFICATION_TOKEN_TIME_HOUR: int
+
     model_config = _base_config
 
 
