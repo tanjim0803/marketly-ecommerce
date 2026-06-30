@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, UploadFile
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from app.config import security_settings
@@ -7,6 +7,7 @@ from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database.models import User, RefreshToken
 import uuid
+from pathlib import Path
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -126,6 +127,7 @@ async def get_user_by_email(session: AsyncSession, email: str):
 
     return user
 
+
 def create_password_reset_token(user_id: int):
     expire = datetime.now(timezone.utc) + timedelta(
         hours=security_settings.EMAIL_PASSWORD_RESET_TOKEN_HOUR
@@ -139,13 +141,31 @@ def create_password_reset_token(user_id: int):
         algorithm=security_settings.JWT_ALGORITHM,
     )
 
+
 async def revoke_refresh_token(session: AsyncSession, token: str):
     statement = select(RefreshToken).where(RefreshToken.token == token)
     result = await session.execute(statement)
     db_refresh_token = result.scalar_one_or_none()
-    
+
     if db_refresh_token:
         db_refresh_token.revoked = True
         await session.commit()
-        
-    
+
+
+UPLOAD_DIR = Path("media")
+UPLOAD_DIR.mkdir(exist_ok=True)
+
+
+async def save_upload_file(upload_file: UploadFile, sub_dir: str) -> str:
+    ext = Path(upload_file.filename).suffix
+    filename = f"{uuid.uuid4().hex}{ext}"
+    dir_path = UPLOAD_DIR / sub_dir
+    dir_path.mkdir(parents=True, exist_ok=True)
+    file_path = dir_path / filename
+
+    content = await upload_file.read()
+
+    with file_path.open("wb") as f:
+        f.write(content)
+
+    return str(file_path)
