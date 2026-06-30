@@ -80,9 +80,7 @@ async def verify_refresh_token(session: AsyncSession, token: str):
         select(RefreshToken).where(RefreshToken.token == token)
     )
     db_refresh_token = statement.scalar_one_or_none()
-    
-    print(f"===========================DB REFRESH_TOKEN: {db_refresh_token}")
-    
+
     if db_refresh_token and not db_refresh_token.revoked:
         expires_at = db_refresh_token.expires_at
         if expires_at.tzinfo is None:
@@ -120,3 +118,34 @@ def verify_email_token_and_get_user_id(token: str, token_type: str):
         return None
 
     return str(payload.get("sub"))
+
+
+async def get_user_by_email(session: AsyncSession, email: str):
+    statement = await session.execute(select(User).where(User.email == email))
+    user = statement.scalar_one_or_none()
+
+    return user
+
+def create_password_reset_token(user_id: int):
+    expire = datetime.now(timezone.utc) + timedelta(
+        hours=security_settings.EMAIL_PASSWORD_RESET_TOKEN_HOUR
+    )
+
+    to_encode = {"sub": str(user_id), "type": "password_reset", "exp": expire}
+
+    return jwt.encode(
+        to_encode,
+        key=security_settings.JWT_SECRET,
+        algorithm=security_settings.JWT_ALGORITHM,
+    )
+
+async def revoke_refresh_token(session: AsyncSession, token: str):
+    statement = select(RefreshToken).where(RefreshToken.token == token)
+    result = await session.execute(statement)
+    db_refresh_token = result.scalar_one_or_none()
+    
+    if db_refresh_token:
+        db_refresh_token.revoked = True
+        await session.commit()
+        
+    

@@ -26,6 +26,7 @@ class SecuritySettings(BaseSettings):
     JWT_REFRESH_TOKEN_TIME_DAY: int
 
     EMAIL_VERIFICATION_TOKEN_TIME_HOUR: int
+    EMAIL_PASSWORD_RESET_TOKEN_HOUR: int
 
     model_config = _base_config
 
