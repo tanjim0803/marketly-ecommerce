@@ -10,6 +10,22 @@ def get_now():
     return datetime.now(timezone.utc)
 
 
+class ProductCategoryLink(SQLModel, table=True):
+    __tablename__ = "product_category"
+
+    product_id: uuid.UUID = Field(
+        foreign_key="products.id",
+        primary_key=True,
+        ondelete="CASCADE",
+    )
+
+    category_id: uuid.UUID = Field(
+        foreign_key="categories.id",
+        primary_key=True,
+        ondelete="CASCADE",
+    )
+
+
 class User(SQLModel, table=True):
     __tablename__ = "users"
 
@@ -44,3 +60,36 @@ class RefreshToken(SQLModel, table=True):
 
     # Relationship
     user: "User" = Relationship(back_populates="refresh_tokens")
+
+
+class Product(SQLModel, table=True):
+    __tablename__ = "products"
+
+    id: uuid.UUID | None = Field(primary_key=True, default_factory=uuid.uuid4)
+    title: str = Field(max_length=255, nullable=False)
+    description: str = Field(nullable=True)
+    slug: str = Field(unique=True, nullable=False)
+    price: float = Field(nullable=False)
+    stock_quantity: int = Field(default=0)
+    image_url: str = Field(max_length=255, nullable=False)
+    created_at: datetime = Field(
+        default_factory=get_now, sa_type=DateTime(timezone=True)
+    )
+    updated_at: datetime = Field(
+        default_factory=get_now, sa_type=DateTime(timezone=True)
+    )
+
+    categories: List["Category"] = Relationship(
+        back_populates="products", link_model=ProductCategoryLink
+    )
+
+
+class Category(SQLModel, table=True):
+    __tablename__ = "categories"
+
+    id: uuid.UUID = Field(primary_key=True, default_factory=uuid.uuid4)
+    name: str = Field(max_length=50, unique=True, nullable=False)
+
+    products: List["Product"] = Relationship(
+        back_populates="categories", link_model=ProductCategoryLink
+    )
