@@ -1,9 +1,11 @@
+import enum
+
 from sqlalchemy import DateTime
 from sqlmodel import SQLModel, Field, Relationship
 from pydantic import EmailStr
 from datetime import datetime, timezone
 import uuid
-from typing import List
+from typing import List, Optional
 
 
 def get_now():
@@ -56,6 +58,9 @@ class User(SQLModel, table=True):
         back_populates="user", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )
     shipping_address: "ShippingAddress" = Relationship(
+        back_populates="user", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )
+    payments: list["Payment"] = Relationship(
         back_populates="user", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )
 
@@ -118,7 +123,7 @@ class Category(SQLModel, table=True):
     )
 
 
-### =========> Cart Items <========= ###
+### =========> Cart <========= ###
 
 
 class CartItem(SQLModel, table=True):
@@ -139,7 +144,15 @@ class CartItem(SQLModel, table=True):
     product: "Product" = Relationship(back_populates="cart_items")
 
 
-### =========> Cart Items <========= ###
+### =========> Shipping <========= ###
+class ShippingStatusEnum(enum.Enum):
+    pending = "pending"
+    processing = "processing"
+    shipped = "shipped"
+    delivered = "delivered"
+    cancelled = "cancelled"
+
+
 class ShippingAddress(SQLModel, table=True):
     __tablename__ = "shipping_address"
 
@@ -155,4 +168,137 @@ class ShippingAddress(SQLModel, table=True):
     pin_code: str = Field(max_length=20, nullable=False)
     country: str = Field(max_length=100, nullable=False)
 
+    # Relationship
     user: "User" = Relationship(back_populates="shipping_address")
+    orders: list["Order"] = Relationship(back_populates="shipping_address")
+
+
+class ShippingStatus(SQLModel, table=True):
+    __tablename__ = "shipping_status"
+
+    id: uuid.UUID | None = Field(
+        primary_key=True, default_factory=uuid.uuid4, index=True
+    )
+    order_id: uuid.UUID = Field(
+        foreign_key="orders.id", ondelete="CASCADE", nullable=False
+    )
+    status: ShippingStatusEnum = Field(default=ShippingStatusEnum.pending)
+    updated_at: datetime = Field(
+        default_factory=get_now, sa_type=DateTime(timezone=True)
+    )
+
+    # Relationship
+    order: "Order" = Relationship(back_populates="shipping_status")
+
+
+### =========> Orders <========= ###
+class OrderStatus(str, enum.Enum):
+    pending = "pending"
+    confirmed = "confirmed"
+    cancelled = "cancelled"
+
+
+class Order(SQLModel, table=True):
+    __tablename__ = "orders"
+
+    id: uuid.UUID | None = Field(primary_key=True, default_factory=uuid.uuid4)
+    user_id: uuid.UUID = Field(
+        foreign_key="users.id", ondelete="CASCADE", nullable=False
+    )
+    total_price: float = Field(nullable=False)
+    status: OrderStatus = Field(default=OrderStatus.pending, nullable=False)
+    shipping_address_id: uuid.UUID = Field(
+        foreign_key="shipping_address.id", nullable=False
+    )
+    created_at: datetime = Field(
+        default_factory=get_now, sa_type=DateTime(timezone=True)
+    )
+
+    # Relationship
+    orderitems: list["OrderItem"] = Relationship(
+        back_populates="order", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )
+    shipping_address: "ShippingAddress" = Relationship(
+        back_populates="orders", sa_relationship_kwargs={"lazy": "selectin"}
+    )
+    shipping_status: "ShippingStatus" = Relationship(
+        back_populates="order",
+        sa_relationship_kwargs={
+            "uselist": False,
+            "cascade": "all, delete-orphan",
+            "lazy": "selectin",
+        },
+    )
+    payment: Optional["Payment"] = Relationship(
+        back_populates="order",
+        sa_relationship_kwargs={"uselist": False, "cascade": "all, delete-orphan"},
+    )
+
+
+class OrderItem(SQLModel, table=True):
+    __tablename__ = "order_items"
+
+    id: uuid.UUID | None = Field(
+        primary_key=True, default_factory=uuid.uuid4, index=True
+    )
+    order_id: uuid.UUID = Field(
+        foreign_key="orders.id", ondelete="CASCADE", nullable=False, unique=True
+    )
+    product_id: uuid.UUID | None = Field(
+        foreign_key="products.id", ondelete="SET NULL", nullable=True
+    )
+    quantity: int = Field(nullable=False)
+    price: float = Field(nullable=False)
+
+    # Relationship
+    order: "Order" = Relationship(back_populates="orderitems")
+    product: Optional["Product"] = Relationship(
+        sa_relationship_kwargs={"lazy": "selectin"}
+    )
+
+
+### =========> Payments <========= ###
+
+
+class PaymentStatus(str, enum.Enum):
+    pending = "pending"
+    success = "success"
+    failed = "failed"
+    cancelled = "cancelled"
+
+
+class PaymentGateway(str, enum.Enum):
+    mock = "mock"
+    razorpay = "razorpay"
+
+
+class Payment(SQLModel, table=True):
+    __tablename__ = "payments"
+
+    id: uuid.UUID | None = Field(
+        primary_key=True, default_factory=uuid.uuid4, index=True
+    )
+    order_id: uuid.UUID = Field(
+        foreign_key="orders.id", ondelete="CASCADE", nullable=False, unique=True
+    )
+    user_id: uuid.UUID = Field(
+        foreign_key="users.id", ondelete="CASCADE", nullable=False
+    )
+    amount: int = Field(nullable=False)
+    status: PaymentStatus = Field(default=PaymentStatus.pending, nullable=False)
+    payment_gateway: PaymentGateway = Field(default=PaymentGateway.mock, nullable=False)
+    is_paid: bool = Field(default=False)
+
+    pg_order_id: str | None = Field(max_length=100, nullable=True)
+    pg_payment_id: str | None = Field(max_length=100, nullable=True)
+    pg_signature: str | None = Field(max_length=100, nullable=True)
+
+    created_at: datetime = Field(
+        default_factory=get_now, sa_type=DateTime(timezone=True)
+    )
+    updated_at: datetime = Field(
+        default_factory=get_now, sa_type=DateTime(timezone=True)
+    )
+
+    order: "Order" = Relationship(back_populates="payment")
+    user: "User" = Relationship(back_populates="payments")

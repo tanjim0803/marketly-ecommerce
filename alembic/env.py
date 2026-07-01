@@ -6,7 +6,19 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 from sqlmodel import SQLModel
 from alembic import context
-from app.database.models import User, RefreshToken, Product, Category, ProductCategoryLink, CartItem, ShippingAddress
+from app.database.models import (
+    User,
+    RefreshToken,
+    Product,
+    Category,
+    ProductCategoryLink,
+    CartItem,
+    ShippingAddress,
+    ShippingStatus,
+    Order,
+    OrderItem,
+    Payment,
+)
 
 from app.config import db_settings
 
