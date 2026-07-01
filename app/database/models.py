@@ -12,6 +12,7 @@ def get_now():
 
 ### =========> Associated Tables <========= ###
 
+
 class ProductCategoryLink(SQLModel, table=True):
     __tablename__ = "product_category"
 
@@ -30,6 +31,7 @@ class ProductCategoryLink(SQLModel, table=True):
 
 ### =========> Users <========= ###
 
+
 class User(SQLModel, table=True):
     __tablename__ = "users"
 
@@ -47,9 +49,11 @@ class User(SQLModel, table=True):
     )
 
     # Relationship
-    refresh_tokens: List["RefreshToken"] = Relationship(back_populates="user")
-    cart_items: "CartItem" = Relationship(
-        back_populates="user", sa_relationship_args={"casecade": "all, delete-orphan"}
+    refresh_tokens: List["RefreshToken"] = Relationship(
+        back_populates="user", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )
+    cart_items: List["CartItem"] = Relationship(
+        back_populates="user", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )
 
 
@@ -73,6 +77,7 @@ class RefreshToken(SQLModel, table=True):
 
 ### =========> Products <========= ###
 
+
 class Product(SQLModel, table=True):
     __tablename__ = "products"
 
@@ -95,6 +100,8 @@ class Product(SQLModel, table=True):
         back_populates="products", link_model=ProductCategoryLink
     )
 
+    cart_items: List["CartItem"] = Relationship(back_populates="product")
+
 
 class Category(SQLModel, table=True):
     __tablename__ = "categories"
@@ -106,10 +113,10 @@ class Category(SQLModel, table=True):
     products: List["Product"] = Relationship(
         back_populates="categories", link_model=ProductCategoryLink
     )
-    cart_items: "CartItem" = Relationship(back_populates="product")
 
 
 ### =========> Cart Items <========= ###
+
 
 class CartItem(SQLModel, table=True):
     __tablename__ = "cart_items"
