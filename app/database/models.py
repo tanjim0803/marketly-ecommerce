@@ -10,6 +10,8 @@ def get_now():
     return datetime.now(timezone.utc)
 
 
+### =========> Associated Tables <========= ###
+
 class ProductCategoryLink(SQLModel, table=True):
     __tablename__ = "product_category"
 
@@ -25,6 +27,8 @@ class ProductCategoryLink(SQLModel, table=True):
         ondelete="CASCADE",
     )
 
+
+### =========> Users <========= ###
 
 class User(SQLModel, table=True):
     __tablename__ = "users"
@@ -44,13 +48,18 @@ class User(SQLModel, table=True):
 
     # Relationship
     refresh_tokens: List["RefreshToken"] = Relationship(back_populates="user")
+    cart_items: "CartItem" = Relationship(
+        back_populates="user", sa_relationship_args={"casecade": "all, delete-orphan"}
+    )
 
 
 class RefreshToken(SQLModel, table=True):
     __tablename__ = "refresh_tokens"
 
     id: uuid.UUID | None = Field(primary_key=True, default_factory=uuid.uuid4)
-    user_id: uuid.UUID = Field(foreign_key="users.id", ondelete="CASCADE")
+    user_id: uuid.UUID = Field(
+        foreign_key="users.id", ondelete="CASCADE", nullable=False
+    )
     token: str = Field(max_length=255, nullable=False)
     expires_at: datetime = Field(nullable=False, sa_type=DateTime(timezone=True))
     revoked: bool = Field(default=False)
@@ -61,6 +70,8 @@ class RefreshToken(SQLModel, table=True):
     # Relationship
     user: "User" = Relationship(back_populates="refresh_tokens")
 
+
+### =========> Products <========= ###
 
 class Product(SQLModel, table=True):
     __tablename__ = "products"
@@ -79,6 +90,7 @@ class Product(SQLModel, table=True):
         default_factory=get_now, sa_type=DateTime(timezone=True)
     )
 
+    # Relationship
     categories: List["Category"] = Relationship(
         back_populates="products", link_model=ProductCategoryLink
     )
@@ -90,6 +102,28 @@ class Category(SQLModel, table=True):
     id: uuid.UUID = Field(primary_key=True, default_factory=uuid.uuid4)
     name: str = Field(max_length=50, unique=True, nullable=False)
 
+    # Relationship
     products: List["Product"] = Relationship(
         back_populates="categories", link_model=ProductCategoryLink
     )
+    cart_items: "CartItem" = Relationship(back_populates="product")
+
+
+### =========> Cart Items <========= ###
+
+class CartItem(SQLModel, table=True):
+    __tablename__ = "cart_items"
+
+    id: uuid.UUID | None = Field(primary_key=True, default_factory=uuid.uuid4)
+    user_id: uuid.UUID = Field(
+        foreign_key="users.id", ondelete="CASCADE", nullable=False
+    )
+    product_id: uuid.UUID = Field(
+        foreign_key="products.id", ondelete="SET NULL", nullable=True
+    )
+    quantity: int = Field(default=1)
+    price: float = Field(nullable=False)
+
+    # Relationship
+    user: "User" = Relationship(back_populates="cart_items")
+    product: "Product" = Relationship(back_populates="cart_items")
