@@ -51,3 +51,14 @@ async def user_shipping_address_update_by_address_id(
     return await shipping_service.update_user_shipping_address_by_address_id(
         session, address_id, user.id, data
     )
+
+
+@shipping_router.delete("/addresses/{address_id}")
+async def user_shipping_address_delete_by_address_id(
+    user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+    address_id: str,
+):
+    return await shipping_service.delete_user_shipping_address_by_address_id(
+        session, address_id, user.id
+    )

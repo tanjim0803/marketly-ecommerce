@@ -73,5 +73,21 @@ class ShippingService:
 
         return address
 
+    async def delete_user_shipping_address_by_address_id(
+        self, session: AsyncSession, address_id: str, user_id: str
+    ):
+        address = await session.get(ShippingAddress, address_id)
+
+        if not address or address.user_id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Address not found or not authorized!",
+            )
+
+        await session.delete(address)
+        await session.commit()
+
+        return {"message": "Address deleted successfully!"}
+
 
 shipping_service = ShippingService()
