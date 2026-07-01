@@ -7,6 +7,7 @@ from app.api.schemas.product import (
     ProductCreate,
     ProductOut,
     PaginatedProductOut,
+    ProductUpdate,
 )
 from sqlmodel import select, func, and_
 from fastapi import HTTPException, UploadFile, status
@@ -202,6 +203,59 @@ class ProductService:
             return None
 
         return product
+
+    async def update_product_by_id(
+        self,
+        session: AsyncSession,
+        product_id: str,
+        data: ProductUpdate,
+        image_url: UploadFile | None = None,
+    ) -> ProductOut:
+        statement = await session.execute(
+            select(Product)
+            .options(selectinload(Product.categories))
+            .where(Product.id == product_id)
+        )
+
+        product = statement.scalar_one_or_none()
+
+        if not product:
+            return None
+
+        if data.categories_ids is not None:
+            category_statement = select(Category).where(
+                Category.id.in_(data.categories_ids)
+            )
+            category_result = await session.execute(category_statement)
+            product.categories = category_result.scalars().all()
+
+        for key, value in data.model_dump(
+            exclude={"category_id"}, exclude_none=True
+        ).items():
+            setattr(product, key, value)
+
+        if image_url is not None:
+            image_path = await save_upload_file(image_url, "images")
+            product.image_url = image_path
+
+        await session.commit()
+        await session.refresh(product)
+
+        return product
+
+    async def delete_product(self, session: AsyncSession, product_id: str) -> bool:
+        statement = await session.execute(
+            select(Product).where(Product.id == product_id)
+        )
+        product = statement.scalar_one_or_none()
+
+        if not product:
+            return None
+
+        await session.delete(product)
+        await session.commit()
+
+        return True
 
 
 product_service = ProductService()

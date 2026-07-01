@@ -17,6 +17,7 @@ from app.api.schemas.product import (
     ProductCreate,
     ProductOut,
     PaginatedProductOut,
+    ProductUpdate,
 )
 from app.api.dependencies import require_admin, get_current_user
 from typing import Annotated, List
@@ -25,7 +26,7 @@ import uuid
 product_router = APIRouter()
 
 
-@product_router.post("/create-category", response_model=CategoryOut)
+@product_router.post("/category", response_model=CategoryOut)
 async def create_category(
     _admin_user: Annotated[User, Depends(require_admin)],
     session: SessionDep,
@@ -110,3 +111,51 @@ async def product_get_by_slug(session: SessionDep, slug: str):
         )
 
     return product
+
+
+@product_router.patch("/{product_id}", response_model=ProductOut)
+async def product_update_by_id(
+    _admin_user: Annotated[User, Depends(require_admin)],
+    session: SessionDep,
+    product_id: str,
+    title: str | None = Form(default=None),
+    description: str | None = Form(default=None),
+    price: float | None = Form(default=None),
+    stock_quantity: int | None = Form(default=None),
+    category_ids: list[str] | None = Form(default=None),
+    image_url: UploadFile | None = Form(default=None),
+):
+    data = ProductUpdate(
+        title=title,
+        description=description,
+        price=price,
+        stock_quantity=stock_quantity,
+        categories_ids=category_ids,
+    )
+
+    product = await product_service.update_product_by_id(
+        session, product_id, data, image_url
+    )
+
+    if not product:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Product not found!"
+        )
+
+    return product
+
+
+@product_router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def product_delete_by_id(
+    _admin_user: Annotated[User, Depends(require_admin)],
+    session: SessionDep,
+    product_id: str,
+):
+    result = await product_service.delete_product(session, product_id)
+
+    if not result:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Product doesn't exists!"
+        )
+
+    return {"message": "Product deleted successfully!"}
