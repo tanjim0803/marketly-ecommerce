@@ -24,3 +24,14 @@ async def shipping_addresses_user_list(
     session: SessionDep,
 ):
     return await shipping_service.list_user_shipping_addresses(session, user.id)
+
+
+@shipping_router.get("/addresses/{address_id}", response_model=ShippingAddressOut)
+async def shipping_address_user_by_user_id(
+    user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+    address_id: str,
+):
+    return await shipping_service.get_user_shipping_address_by_address_id(
+        session, address_id, user.id
+    )

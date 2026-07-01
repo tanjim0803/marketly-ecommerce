@@ -33,5 +33,18 @@ class ShippingService:
 
         return addresses
 
+    async def get_user_shipping_address_by_address_id(
+        self, session: AsyncSession, address_id: str, user_id: str
+    ) -> ShippingAddressOut:
+        address = await session.get(ShippingAddress, address_id)
+
+        if not address or address.user_id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Address not found or not authorized!",
+            )
+
+        return address
+
 
 shipping_service = ShippingService()
