@@ -55,6 +55,9 @@ class User(SQLModel, table=True):
     cart_items: List["CartItem"] = Relationship(
         back_populates="user", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )
+    shipping_address: "ShippingAddress" = Relationship(
+        back_populates="user", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )
 
 
 class RefreshToken(SQLModel, table=True):
@@ -134,3 +137,22 @@ class CartItem(SQLModel, table=True):
     # Relationship
     user: "User" = Relationship(back_populates="cart_items")
     product: "Product" = Relationship(back_populates="cart_items")
+
+
+### =========> Cart Items <========= ###
+class ShippingAddress(SQLModel, table=True):
+    __tablename__ = "shipping_address"
+
+    id: uuid.UUID | None = Field(primary_key=True, default_factory=uuid.uuid4)
+    user_id: uuid.UUID = Field(
+        foreign_key="users.id", ondelete="CASCADE", nullable=False
+    )
+    name: str = Field(max_length=255, nullable=False)
+    address_line1: str = Field(max_length=255, nullable=False)
+    address_line2: str = Field(max_length=255, nullable=True)
+    city: str = Field(max_length=100, nullable=False)
+    state: str = Field(max_length=100, nullable=False)
+    pin_code: str = Field(max_length=20, nullable=False)
+    country: str = Field(max_length=100, nullable=False)
+
+    user: "User" = Relationship(back_populates="shipping_address")
