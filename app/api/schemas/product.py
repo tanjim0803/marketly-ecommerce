@@ -43,3 +43,10 @@ class ProductOut(ProductBase):
     model_config = {
         "from_attributes": True,
     }
+
+
+class PaginatedProductOut(BaseModel):
+    total: int
+    page: int
+    limit: int
+    items: list[ProductOut]

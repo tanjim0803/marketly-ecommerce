@@ -7,7 +7,7 @@ from app.api.schemas.product import (
     ProductCreate,
     ProductOut,
 )
-from sqlmodel import select
+from sqlmodel import select, func
 from fastapi import HTTPException, UploadFile, status
 from typing import List
 from app.utils import save_upload_file, generate_slug
@@ -95,6 +95,55 @@ class ProductService:
         )
 
         product = result.scalar_one()
+
+        return product
+
+    async def get_all_products(
+        self,
+        session: AsyncSession,
+        category_names: list[str] | None = None,
+        limit: int = 5,
+        page: int = 1,
+    ) -> dict:
+        statement = select(Product).options(selectinload(Product.categories))
+
+        if category_names:
+            statement = (
+                statement.join(Product.categories)
+                .where(Category.name.in_(category_names))
+                .distinct()
+            )
+
+        count_statement = statement.with_only_columns(func.count(Product.id)).order_by(
+            None
+        )
+        total = await session.scalar(count_statement)
+
+        statement = statement.limit(limit).offset((page - 1) * limit)
+
+        result = await session.execute(statement)
+
+        products = result.scalars().all()
+
+        return {
+            "total": total,
+            "page": page,
+            "limit": limit,
+            "items": products,
+        }
+
+    async def get_product_by_slug(
+        self, session: AsyncSession, slug: str
+    ) -> ProductOut | None:
+        statement = await session.execute(
+            select(Product)
+            .options(selectinload(Product.categories))
+            .where(Product.slug == slug)
+        )
+        product = statement.scalar_one_or_none()
+
+        if not product:
+            return None
 
         return product
 

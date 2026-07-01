@@ -1,4 +1,13 @@
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status, Form
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    HTTPException,
+    UploadFile,
+    status,
+    Form,
+    Query,
+)
 from app.services.product import product_service
 from app.database.session import SessionDep
 from app.database.models import Category, User
@@ -7,6 +16,7 @@ from app.api.schemas.product import (
     CategoryOut,
     ProductCreate,
     ProductOut,
+    PaginatedProductOut,
 )
 from app.api.dependencies import require_admin, get_current_user
 from typing import Annotated, List
@@ -62,3 +72,25 @@ async def product_create(
     )
 
     return await product_service.create_product(session, data, image_url)
+
+
+@product_router.get("/", response_model=PaginatedProductOut)
+async def list_products(
+    session: SessionDep,
+    categories: list[str] | None = Query(default=None),
+    limit: int = Query(default=5, ge=1, le=100),
+    page: int = Query(default=1, ge=1),
+):
+    return await product_service.get_all_products(session, categories, limit, page)
+
+
+@product_router.get("/{slug}", response_model=ProductOut)
+async def product_get_by_slug(session: SessionDep, slug: str):
+    product = await product_service.get_product_by_slug(session, slug)
+
+    if not product:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Product not found!"
+        )
+
+    return product
