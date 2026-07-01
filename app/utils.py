@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database.models import User, RefreshToken
 import uuid
 from pathlib import Path
+from slugify import slugify
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -169,3 +170,7 @@ async def save_upload_file(upload_file: UploadFile, sub_dir: str) -> str:
         f.write(content)
 
     return str(file_path)
+
+
+def generate_slug(text: str) -> str:
+    return slugify(text)

@@ -37,7 +37,7 @@ class ProductOut(ProductBase):
     description: str
     slug: str
     price: float
-    categories: list[CategoryOut] = []
+    categories: list[CategoryOut] = Field(default_factory=list)
     image_url: str | None = None
 
     model_config = {
