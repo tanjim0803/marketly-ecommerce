@@ -2,7 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from app.database.session import SessionDep
 from app.api.dependencies import get_current_user
 from app.database.models import User
-from app.api.schemas.shipping import ShippingAddressCreate, ShippingAddressOut
+from app.api.schemas.shipping import (
+    ShippingAddressCreate,
+    ShippingAddressOut,
+    ShippingAddressUpdate,
+)
 from typing import Annotated
 from app.services.shipping import shipping_service
 
@@ -27,11 +31,23 @@ async def shipping_addresses_user_list(
 
 
 @shipping_router.get("/addresses/{address_id}", response_model=ShippingAddressOut)
-async def shipping_address_user_by_user_id(
+async def shipping_address_user_by_address_id(
     user: Annotated[User, Depends(get_current_user)],
     session: SessionDep,
     address_id: str,
 ):
     return await shipping_service.get_user_shipping_address_by_address_id(
         session, address_id, user.id
+    )
+
+
+@shipping_router.patch("/addresses/{address_id}", response_model=ShippingAddressOut)
+async def user_shipping_address_update_by_address_id(
+    user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+    address_id: str,
+    data: ShippingAddressUpdate,
+):
+    return await shipping_service.update_user_shipping_address_by_address_id(
+        session, address_id, user.id, data
     )

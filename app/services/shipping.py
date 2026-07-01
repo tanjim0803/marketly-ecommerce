@@ -1,7 +1,11 @@
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database.models import ShippingAddress, User
-from app.api.schemas.shipping import ShippingAddressCreate, ShippingAddressOut
+from app.api.schemas.shipping import (
+    ShippingAddressCreate,
+    ShippingAddressOut,
+    ShippingAddressUpdate,
+)
 from sqlmodel import select
 from fastapi import HTTPException, status
 from typing import List
@@ -43,6 +47,29 @@ class ShippingService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Address not found or not authorized!",
             )
+
+        return address
+
+    async def update_user_shipping_address_by_address_id(
+        self,
+        session: AsyncSession,
+        address_id: str,
+        user_id: str,
+        data: ShippingAddressUpdate,
+    ) -> ShippingAddressOut:
+        address = await session.get(ShippingAddress, address_id)
+
+        if not address or address.user_id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Address not found or not authorized!",
+            )
+
+        for key, value in data.model_dump(exclude_unset=True).items():
+            setattr(address, key, value)
+
+        await session.commit()
+        session.refresh(address)
 
         return address
 
