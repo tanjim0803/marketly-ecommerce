@@ -45,3 +45,10 @@ async def decrease_quantity_by_product(
     return await cart_service.change_cart_item_quantity_by_product(
         session, user.id, product_id, delta=-1
     )
+
+
+@cart_router.delete("/delete/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_cart_item(
+    _user: Annotated[User, Depends(get_current_user)], session: SessionDep, item_id: str
+):
+    await cart_service.delete_cart_item(session, item_id)
