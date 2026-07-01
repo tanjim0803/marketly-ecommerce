@@ -84,6 +84,22 @@ async def list_products(
     return await product_service.get_all_products(session, categories, limit, page)
 
 
+@product_router.get("/search")
+async def products_search(
+    session: SessionDep,
+    categories: list[str] | None = Query(default=None),
+    title: str = Query(default=None),
+    description: str | None = Query(default=None),
+    min_price: float | None = Query(default=None),
+    max_price: float | None = Query(default=None),
+    limit: int = Query(default=5, ge=1, le=100),
+    page: int = Query(default=1, ge=1),
+):
+    return await product_service.search_products(
+        session, categories, title, description, min_price, max_price, limit, page
+    )
+
+
 @product_router.get("/{slug}", response_model=ProductOut)
 async def product_get_by_slug(session: SessionDep, slug: str):
     product = await product_service.get_product_by_slug(session, slug)

@@ -6,8 +6,9 @@ from app.api.schemas.product import (
     CategoryOut,
     ProductCreate,
     ProductOut,
+    PaginatedProductOut,
 )
-from sqlmodel import select, func
+from sqlmodel import select, func, and_
 from fastapi import HTTPException, UploadFile, status
 from typing import List
 from app.utils import save_upload_file, generate_slug
@@ -113,6 +114,61 @@ class ProductService:
                 .where(Category.name.in_(category_names))
                 .distinct()
             )
+
+        count_statement = statement.with_only_columns(func.count(Product.id)).order_by(
+            None
+        )
+        total = await session.scalar(count_statement)
+
+        statement = statement.limit(limit).offset((page - 1) * limit)
+
+        result = await session.execute(statement)
+
+        products = result.scalars().all()
+
+        return {
+            "total": total,
+            "page": page,
+            "limit": limit,
+            "items": products,
+        }
+
+    async def search_products(
+        self,
+        session: AsyncSession,
+        category_names: list[str] | None = None,
+        title: str | None = None,
+        description: str | None = None,
+        min_price: float | None = None,
+        max_price: float | None = None,
+        limit: int = 5,
+        page: int = 1,
+    ) -> dict:
+        statement = select(Product).options(selectinload(Product.categories))
+
+        if category_names:
+            statement = (
+                statement.join(Product.categories)
+                .where(Category.name.in_(category_names))
+                .distinct()
+            )
+
+        filters = []
+
+        if title:
+            filters.append(Product.title.like(f"%{title}%"))
+
+        if description:
+            filters.append(Product.description.like(f"%{description}%"))
+
+        if min_price is not None:
+            filters.append(Product.price >= min_price)
+
+        if max_price is not None:
+            filters.append(Product.price <= max_price)
+
+        if filters:
+            statement = statement.where(and_(*filters))
 
         count_statement = statement.with_only_columns(func.count(Product.id)).order_by(
             None
