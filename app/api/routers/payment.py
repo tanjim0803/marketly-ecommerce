@@ -10,8 +10,23 @@ import uuid
 payment_router = APIRouter()
 
 
+@payment_router.get("/", response_model=list[PaymentOut])
+async def get_all_payments_by_user(
+    user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+):
+    payments = await payment_service.list_payments_by_user(session, user.id)
+
+    if not payments:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No Payments found"
+        )
+
+    return payments
+
+
 @payment_router.get("/{order_id}", response_model=PaymentOut)
-async def get_payment_status_by_order(
+async def get_payment_status_by_order_id(
     user: Annotated[User, Depends(get_current_user)],
     session: SessionDep,
     order_id: uuid.UUID,
@@ -22,5 +37,5 @@ async def get_payment_status_by_order(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Payment not found"
         )
-    
+
     return payment

@@ -60,5 +60,11 @@ class PaymentService:
 
         return result.scalar_one_or_none()
 
+    async def list_payments_by_user(self, session: AsyncSession, user_id: str):
+        statement = select(Payment).where(Payment.user_id == user_id)
+        result = await session.execute(statement)
+
+        return result.scalars().all()
+
 
 payment_service = PaymentService()
