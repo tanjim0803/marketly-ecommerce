@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 import uuid
-
+from app.database.models import ShippingStatusEnum
+from datetime import datetime
 
 class ShippingAddressBase(BaseModel):
     name: str
@@ -29,5 +30,13 @@ class ShippingAddressUpdate(BaseModel):
 class ShippingAddressOut(ShippingAddressBase):
     id: uuid.UUID
     user_id: uuid.UUID
+
+    model_config = {"from_attributes": True}
+
+class ShippingStatusOut(BaseModel):
+    id: uuid.UUID
+    order_id: uuid.UUID
+    status: ShippingStatusEnum
+    updated_at: datetime
 
     model_config = {"from_attributes": True}

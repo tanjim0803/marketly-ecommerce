@@ -180,7 +180,7 @@ class ShippingStatus(SQLModel, table=True):
         primary_key=True, default_factory=uuid.uuid4, index=True
     )
     order_id: uuid.UUID = Field(
-        foreign_key="orders.id", ondelete="CASCADE", nullable=False
+        foreign_key="orders.id", ondelete="CASCADE", nullable=True
     )
     status: ShippingStatusEnum = Field(default=ShippingStatusEnum.pending)
     updated_at: datetime = Field(
