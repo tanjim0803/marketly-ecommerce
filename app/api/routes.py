@@ -4,6 +4,7 @@ from app.api.routers.product import product_router
 from app.api.routers.cart import cart_router
 from app.api.routers.shipping import shipping_router
 from app.api.routers.order import order_router
+from app.api.routers.payment import payment_router
 
 master_router = APIRouter(prefix="/api")
 
@@ -14,3 +15,4 @@ master_router.include_router(
 master_router.include_router(cart_router, prefix="/carts", tags=["Cart"])
 master_router.include_router(shipping_router, prefix="/shippings", tags=["Shippings"])
 master_router.include_router(order_router, prefix="/orders", tags=["Orders"])
+master_router.include_router(payment_router, prefix="/payments", tags=["Payments"])
