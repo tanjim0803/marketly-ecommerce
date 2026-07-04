@@ -143,5 +143,30 @@ class OrderService:
 
             return result.scalar_one()
 
+    async def get_placed_order_for_user(self, session: AsyncSession, user_id: str):
+        statement = (
+            select(Order)
+            .where(Order.user_id == user_id)
+            .options(
+                selectinload(Order.orderitems),
+                selectinload(Order.orderitems).selectinload(OrderItem.product),
+            )
+        )
+
+        result = await session.execute(statement)
+
+        return result.scalars().all()
+
+    async def get_order_by_id(self, session: AsyncSession, user_id: str, order_id: str):
+        statement = (
+            select(Order)
+            .where(Order.id == order_id)
+            .options(selectinload(Order.orderitems))
+        )
+
+        result = await session.execute(statement)
+
+        return result.scalar_one_or_none()
+
 
 order_service = OrderService()

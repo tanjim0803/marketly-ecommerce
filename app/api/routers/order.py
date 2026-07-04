@@ -17,3 +17,24 @@ async def checkout_order(
     payment_data: PaymentCreate,
 ):
     return await order_service.checkout(session, user.id, payment_data)
+
+
+@order_router.get("/", response_model=list[OrderOut])
+async def get_user_order_list(
+    user: Annotated[User, Depends(get_current_user)], session: SessionDep
+):
+    return await order_service.get_placed_order_for_user(session, user.id)
+
+
+@order_router.get("/{order_id}", response_model=OrderOut)
+async def get_user_order_by_id(
+    user: Annotated[User, Depends(get_current_user)], session: SessionDep, order_id: str
+):
+    order = await order_service.get_order_by_id(session, user.id, order_id)
+
+    if not order:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Order not found!"
+        )
+
+    return order
