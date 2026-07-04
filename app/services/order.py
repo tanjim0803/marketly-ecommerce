@@ -160,13 +160,38 @@ class OrderService:
     async def get_order_by_id(self, session: AsyncSession, user_id: str, order_id: str):
         statement = (
             select(Order)
-            .where(Order.id == order_id)
+            .where(Order.id == order_id, Order.user_id == user_id)
             .options(selectinload(Order.orderitems))
         )
 
         result = await session.execute(statement)
 
         return result.scalar_one_or_none()
+
+    async def cancel_order(self, session: AsyncSession, user_id: str, order_id: str):
+        order = await self.get_order_by_id(session, user_id, order_id)
+
+        if not order:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Order not found!"
+            )
+
+        if (
+            not order.shipping_status
+            or order.shipping_status.status != ShippingStatusEnum.pending
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Only orders with pending shipping status can be cancelled!",
+            )
+
+        order.status = OrderStatus.cancelled
+        order.shipping_status.status = ShippingStatusEnum.cancelled
+
+        await session.commit()
+        await session.refresh(order)
+
+        return order
 
 
 order_service = OrderService()

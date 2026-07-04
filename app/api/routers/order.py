@@ -38,3 +38,10 @@ async def get_user_order_by_id(
         )
 
     return order
+
+
+@order_router.patch("/cancel/{order_id}", response_model=OrderOut)
+async def order_cancel(
+    user: Annotated[User, Depends(get_current_user)], session: SessionDep, order_id: str
+):
+    return await order_service.cancel_order(session, user.id, order_id)
