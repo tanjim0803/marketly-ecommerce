@@ -1,6 +1,11 @@
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.database.models import ShippingAddress, User
+from app.database.models import (
+    ShippingAddress,
+    ShippingStatus,
+    Order,
+    ShippingStatusEnum,
+)
 from app.api.schemas.shipping import (
     ShippingAddressCreate,
     ShippingAddressOut,
@@ -88,6 +93,55 @@ class ShippingService:
         await session.commit()
 
         return {"message": "Address deleted successfully!"}
+
+    async def get_user_order_shipping_status(
+        self, session: AsyncSession, order_id: str, user_id: str
+    ):
+        statement = select(Order).where(Order.id == order_id, Order.user_id == user_id)
+
+        result = await session.execute(statement)
+
+        order = result.scalar_one_or_none()
+
+        if not order:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Order not found or not authorized",
+            )
+
+        statement = select(ShippingStatus).where(ShippingStatus.order_id == order_id)
+
+        result = await session.execute(statement)
+
+        shipping_status = result.scalar_one_or_none()
+
+        if not shipping_status:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Shipping status not found for this order",
+            )
+
+        return shipping_status
+
+    async def update_shipping_status(
+        self, session: AsyncSession, order_id: str, new_status: ShippingStatusEnum
+    ):
+        statement = select(ShippingStatus).where(ShippingStatus.order_id == order_id)
+
+        result = await session.execute(statement)
+
+        shipping_status = result.scalar_one_or_none()
+
+        if not shipping_status:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Shipping status not found for this order",
+            )
+
+        shipping_status.status = new_status
+        await session.commit()
+        await session.refresh(shipping_status)
+        return shipping_status
 
 
 shipping_service = ShippingService()

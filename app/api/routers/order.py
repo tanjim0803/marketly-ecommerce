@@ -6,6 +6,7 @@ from app.api.schemas.payment import PaymentCreate
 from app.api.schemas.order import OrderOut
 from typing import Annotated
 from app.services.order import order_service
+import uuid
 
 order_router = APIRouter()
 

@@ -173,7 +173,8 @@ class OrderService:
 
         if not order:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Order not found!"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Order not found or not authorized",
             )
 
         if (

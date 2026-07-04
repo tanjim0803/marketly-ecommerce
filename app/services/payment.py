@@ -50,5 +50,15 @@ class PaymentService:
 
         return payment
 
+    async def get_payment_by_order_id(
+        self, session: AsyncSession, order_id: str, user_id: str
+    ):
+        statement = select(Payment).where(
+            Payment.order_id == order_id, Payment.user_id == user_id
+        )
+        result = await session.execute(statement)
+
+        return result.scalar_one_or_none()
+
 
 payment_service = PaymentService()

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from app.database.session import SessionDep
-from app.api.dependencies import get_current_user
+from app.api.dependencies import get_current_user, require_admin
 from app.database.models import User
 from app.api.schemas.shipping import (
     ShippingAddressCreate,
@@ -9,6 +9,8 @@ from app.api.schemas.shipping import (
 )
 from typing import Annotated
 from app.services.shipping import shipping_service
+from app.api.schemas.shipping import ShippingStatusOut, ShippingStatusUpdate
+import uuid
 
 shipping_router = APIRouter()
 
@@ -62,3 +64,24 @@ async def user_shipping_address_delete_by_address_id(
     return await shipping_service.delete_user_shipping_address_by_address_id(
         session, address_id, user.id
     )
+
+
+@shipping_router.get("/status/{order_id}", response_model=ShippingStatusOut)
+async def get_user_order_shipping_status(
+    user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+    order_id: uuid.UUID,
+):
+    return await shipping_service.get_user_order_shipping_status(
+        session, order_id, user.id
+    )
+
+
+@shipping_router.patch("/status/{order_id}", response_model=ShippingStatusOut)
+async def change_shipping_status(
+    _admin_user: Annotated[User, Depends(require_admin)],
+    session: SessionDep,
+    order_id: uuid.UUID,
+    data: ShippingStatusUpdate,
+):
+    return await shipping_service.update_shipping_status(session, order_id, data.status)

@@ -3,6 +3,7 @@ import uuid
 from app.database.models import ShippingStatusEnum
 from datetime import datetime
 
+
 class ShippingAddressBase(BaseModel):
     name: str
     address_line1: str
@@ -33,6 +34,7 @@ class ShippingAddressOut(ShippingAddressBase):
 
     model_config = {"from_attributes": True}
 
+
 class ShippingStatusOut(BaseModel):
     id: uuid.UUID
     order_id: uuid.UUID
@@ -40,3 +42,7 @@ class ShippingStatusOut(BaseModel):
     updated_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class ShippingStatusUpdate(BaseModel):
+    status: ShippingStatusEnum
