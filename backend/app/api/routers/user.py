@@ -147,7 +147,7 @@ async def verify_password_reset_email(session: SessionDep, email: PasswordResetR
 
 @user_router.get("/admin")
 async def admin(user: Annotated[User, Depends(require_admin)]):
-    return {"message": f"Welcome Admin {user.name}"}
+    return {"message": f"Welcome Admin {user.email}"}
 
 
 @user_router.post("/logout")
