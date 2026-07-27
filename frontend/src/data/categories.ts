@@ -1,4 +1,4 @@
-import type { Category } from "@/types/store";
+import { Category } from "@/lib/types/store";
 
 export const categories: Category[] = [
   { id: "cat-1", name: "Baking material", slug: "baking-material", icon: "🥖", productCount: 11 },
