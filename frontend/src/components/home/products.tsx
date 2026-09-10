@@ -14,7 +14,11 @@ export function Products() {
 
           <TabsList className="flex-wrap">
             {browseTabs.map((tab) => (
-              <TabsTrigger key={tab.value} value={tab.value}>
+              <TabsTrigger
+                className="cursor-pointer"
+                key={tab.value}
+                value={tab.value}
+              >
                 {tab.label}
               </TabsTrigger>
             ))}
