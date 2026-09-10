@@ -1,13 +1,9 @@
 import Link from "next/link";
-import {
-  AtSign,
-  Camera,
-  Mail,
-  MapPin,
-  MessageCircle,
-  Phone,
-  Video,
-} from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
+
+import { SlSocialFacebook, SlSocialYoutube } from "react-icons/sl";
+import { VscTwitter } from "react-icons/vsc";
+import { RxInstagramLogo } from "react-icons/rx";
 
 import { categories } from "@/data/categories";
 import { mainNavLinks } from "@/components/layout/nav-links";
@@ -30,10 +26,14 @@ const helpLinks = [
 ];
 
 const socialLinks = [
-  { icon: MessageCircle, href: "https://facebook.com", label: "Facebook" },
-  { icon: AtSign, href: "https://twitter.com", label: "Twitter" },
-  { icon: Camera, href: "https://instagram.com", label: "Instagram" },
-  { icon: Video, href: "https://youtube.com", label: "Youtube" },
+  { icon: SlSocialFacebook, href: "https://facebook.com", label: "Facebook" },
+  { icon: VscTwitter, href: "https://twitter.com", label: "Twitter" },
+  {
+    icon: RxInstagramLogo,
+    href: "https://instagram.com",
+    label: "Instagram",
+  },
+  { icon: SlSocialYoutube, href: "https://youtube.com", label: "Youtube" },
 ];
 
 export function Footer() {
@@ -64,14 +64,13 @@ export function Footer() {
           </p>
           <div className="space-y-2 text-sm text-muted-foreground">
             <p className="flex items-center gap-2">
-              <MapPin className="size-4 text-primary" /> 2118 Thornridge Cir,
-              Syracuse
+              <MapPin className="size-4 text-primary" /> Dhaka- 1204, Bangladesh
             </p>
             <p className="flex items-center gap-2">
               <Phone className="size-4 text-primary" /> +1 800 900 122
             </p>
             <p className="flex items-center gap-2">
-              <Mail className="size-4 text-primary" /> support@nestmart.com
+              <Mail className="size-4 text-primary" /> support@marketly.com
             </p>
           </div>
         </div>
@@ -153,8 +152,7 @@ export function Footer() {
 
       <div className="container flex flex-col items-center justify-between gap-4 py-6 sm:flex-row">
         <p className="text-xs text-muted-foreground">
-          &copy; {new Date().getFullYear()} Marketly. All rights
-          reserved.
+          &copy; {new Date().getFullYear()} Marketly. All rights reserved.
         </p>
 
         <div className="flex items-center gap-3">
