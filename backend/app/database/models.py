@@ -116,6 +116,7 @@ class Category(SQLModel, table=True):
 
     id: uuid.UUID = Field(primary_key=True, default_factory=uuid.uuid4)
     name: str = Field(max_length=50, unique=True, nullable=False)
+    slug: str = Field(unique=True, nullable=False)
 
     # Relationship
     products: List["Product"] = Relationship(

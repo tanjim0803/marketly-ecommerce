@@ -30,7 +30,9 @@ class ProductService:
                 detail="This category already exists!",
             )
 
-        category = Category(**data.model_dump())
+        slug = generate_slug(data.name)
+
+        category = Category(**data.model_dump(), slug=slug)
 
         session.add(category)
         await session.commit()
@@ -103,16 +105,16 @@ class ProductService:
     async def get_all_products(
         self,
         session: AsyncSession,
-        category_names: list[str] | None = None,
+        category_slugs: list[str] | None = None,
         limit: int = 5,
         page: int = 1,
     ) -> dict:
         statement = select(Product).options(selectinload(Product.categories))
 
-        if category_names:
+        if category_slugs:
             statement = (
                 statement.join(Product.categories)
-                .where(Category.name.in_(category_names))
+                .where(Category.slug.in_(category_slugs))
                 .distinct()
             )
 
@@ -137,7 +139,7 @@ class ProductService:
     async def search_products(
         self,
         session: AsyncSession,
-        category_names: list[str] | None = None,
+        category_slugs: list[str] | None = None,
         title: str | None = None,
         description: str | None = None,
         min_price: float | None = None,
@@ -147,10 +149,10 @@ class ProductService:
     ) -> dict:
         statement = select(Product).options(selectinload(Product.categories))
 
-        if category_names:
+        if category_slugs:
             statement = (
                 statement.join(Product.categories)
-                .where(Category.name.in_(category_names))
+                .where(Category.slug.in_(category_slugs))
                 .distinct()
             )
 
