@@ -5,12 +5,15 @@ import { SlSocialFacebook, SlSocialYoutube } from "react-icons/sl";
 import { VscTwitter } from "react-icons/vsc";
 import { RxInstagramLogo } from "react-icons/rx";
 
-import { categories } from "@/data/categories";
+// import { categories } from "@/data/categories";
 import { mainNavLinks } from "@/components/layout/nav-links";
 import { NewsletterForm } from "@/components/layout/newsletter-form";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import Logo from "../../../public/assets/images/header/marketly-logo.webp";
+import { Suspense } from "react";
+import FooterCategories from "./footer-categories";
+import { FooterCategoriesSkeleton } from "./footer-categories-skeleton";
 
 const accountLinks = [
   { label: "My Account", href: "/account" },
@@ -112,21 +115,9 @@ export function Footer() {
         </div>
 
         <div>
-          <h4 className="mb-4 font-heading text-sm font-bold text-secondary">
-            Categories
-          </h4>
-          <ul className="space-y-2 text-sm text-muted-foreground">
-            {categories.slice(0, 5).map((category) => (
-              <li key={category.id}>
-                <Link
-                  href={`/categories/${category.slug}`}
-                  className="transition-colors hover:text-primary"
-                >
-                  {category.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <Suspense fallback={<FooterCategoriesSkeleton />}>
+            <FooterCategories />
+          </Suspense>
         </div>
 
         <div>
