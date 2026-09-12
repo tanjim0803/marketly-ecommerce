@@ -4,7 +4,7 @@ import Logo from "../../../public/assets/images/header/marketly-logo.webp";
 import { SearchBar } from "@/components/layout/search-bar";
 import { NavBar } from "@/components/layout/nav-bar";
 import { MobileNav } from "@/components/layout/mobile-nav";
-import { CartSheet } from "@/components/layout/cart-sheet";
+import CartSheet from "@/components/layout/cart-sheet";
 import Image from "next/image";
 
 export function Header() {

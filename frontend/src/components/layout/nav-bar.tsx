@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ChevronDown, Menu, Phone } from "lucide-react";
-import { categories } from "@/data/categories";
+// import { categories } from "@/data/categories";
 import { cn } from "@/lib/utils";
 import { mainNavLinks } from "@/components/layout/nav-links";
 
@@ -28,7 +28,7 @@ export function NavBar() {
               <ChevronDown className="size-3" />
             </button>
 
-            {showCategories && (
+            {/* {showCategories && (
               <div className="absolute left-0 top-full z-40 w-72 rounded-md border border-border bg-white py-2 shadow-lg">
                 {categories.map((category) => (
                   <Link
@@ -44,7 +44,7 @@ export function NavBar() {
                   </Link>
                 ))}
               </div>
-            )}
+            )} */}
           </div>
         </div>
 

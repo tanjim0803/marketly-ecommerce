@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Menu } from "lucide-react";
 
 import { mainNavLinks } from "@/components/layout/nav-links";
-import { categories } from "@/data/categories";
+// import { categories } from "@/data/categories";
 import {
   Sheet,
   SheetContent,
@@ -54,7 +54,7 @@ export function MobileNav() {
           <h4 className="mb-2 font-heading text-sm font-bold text-secondary">
             Shop by category
           </h4>
-          <nav className="flex flex-col gap-1">
+          {/* <nav className="flex flex-col gap-1">
             {categories.map((category) => (
               <SheetClose asChild key={category.id}>
                 <Link
@@ -69,7 +69,7 @@ export function MobileNav() {
                 </Link>
               </SheetClose>
             ))}
-          </nav>
+          </nav> */}
         </div>
       </SheetContent>
     </Sheet>
