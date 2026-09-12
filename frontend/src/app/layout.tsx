@@ -3,6 +3,7 @@ import { Lato, Quicksand } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import StoreProvider from "@/redux/provider";
 
 const lato = Lato({
   subsets: ["latin"],
@@ -35,9 +36,11 @@ export default function RootLayout({
       className={`${lato.variable} ${quicksand.variable} h-full antialiased`}
     >
       <body className="--font-sans flex min-h-full flex-col bg-background text-foreground">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <StoreProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </StoreProvider>
       </body>
     </html>
   );
