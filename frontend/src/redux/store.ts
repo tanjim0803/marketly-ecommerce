@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { productApi } from "./services/productApi";
 import { categoryApi } from "./services/categoryApi";
-import productFilterReducer from "./features/productFilter";
+import productFilterReducer from "./features/productFilterSlice";
 
 export const makeStore = () => {
   return configureStore({

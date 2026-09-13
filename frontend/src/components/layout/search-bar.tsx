@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { resetFilters, setFilters } from "@/redux/features/productFilter";
+import { resetFilters, setFilters } from "@/redux/features/productFilterSlice";
 import { usePathname, useRouter } from "next/navigation";
 
 export function SearchBar({ className }: { className?: string }) {

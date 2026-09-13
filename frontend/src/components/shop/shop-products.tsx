@@ -8,7 +8,7 @@ import { RootState } from "@/redux/store";
 import { useGetProductsQuery } from "@/redux/services/productApi";
 import { Product } from "@/lib/types/product";
 import ProductTabsSkeleton from "../product/product-skeleton";
-import { setFilters } from "@/redux/features/productFilter";
+import { setFilters } from "@/redux/features/productFilterSlice";
 import { Button } from "@/components/ui/button";
 
 export default function ShopProducts() {

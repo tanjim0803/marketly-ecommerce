@@ -4,8 +4,8 @@ export interface ProductFilterQueryParams {
   categories?: string[];
   title?: string;
   description?: string;
-  minPrice?: string;
-  maxPrice?: string;
+  minPrice?: number;
+  maxPrice?: number;
   limit?: number;
   page?: number;
 }
@@ -14,8 +14,8 @@ const initialState: ProductFilterQueryParams = {
   categories: [],
   title: "",
   description: "",
-  minPrice: "",
-  maxPrice: "",
+  minPrice: 0,
+  maxPrice: 1000,
   limit: 20,
   page: 1,
 };

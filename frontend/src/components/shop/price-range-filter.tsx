@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useDispatch, useSelector } from "react-redux";
-import { setFilters } from "@/redux/features/productFilter";
+import { setFilters } from "@/redux/features/productFilterSlice";
 import { RootState } from "@/redux/store";
 
 interface PriceRangeFilterProps {

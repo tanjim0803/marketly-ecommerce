@@ -1,6 +1,6 @@
 import { Product } from "@/lib/types/product";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { ProductFilterQueryParams } from "../features/productFilter";
+import { ProductFilterQueryParams } from "../features/productFilterSlice";
 
 export interface ProductApiResponse {
   total: number;

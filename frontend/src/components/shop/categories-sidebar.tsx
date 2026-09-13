@@ -5,7 +5,7 @@ import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Card } from "@/components/ui/card";
 import { Category } from "@/lib/types/category";
 import { useDispatch, useSelector } from "react-redux";
-import { setFilters } from "@/redux/features/productFilter";
+import { setFilters } from "@/redux/features/productFilterSlice";
 import { AlertCircle } from "lucide-react";
 import { RootState } from "@/redux/store";
 
