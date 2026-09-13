@@ -3,7 +3,7 @@ import { categoryApi } from "@/redux/services/categoryApi";
 import { productApi } from "@/redux/services/productApi";
 import { makeStore } from "@/redux/store";
 import { ProductTabs } from "./product-tabs";
-import ProductTabsSkeleton from "../layout/product-tabs-skeleton";
+import ProductTabsSkeleton from "./product-skeleton";
 
 interface ProductsProps {
   searchParams?: Promise<{
@@ -11,7 +11,6 @@ interface ProductsProps {
   }>;
 }
 
-// মূল ফেচিং লজিক
 async function ProductsContent({ searchParams }: ProductsProps) {
   const resolvedParams = await searchParams;
   const currentCategory = resolvedParams?.category || "all";
@@ -64,6 +63,7 @@ async function ProductsContent({ searchParams }: ProductsProps) {
     }`;
   }
 
+  console.log(apiData);
   const items = apiData?.items || [];
   const totalPages = apiData
     ? Math.ceil(apiData.total / (apiData.limit || limit))
@@ -80,7 +80,6 @@ async function ProductsContent({ searchParams }: ProductsProps) {
   );
 }
 
-// Suspense সহ রপ্তানি করা হলো
 export function Products(props: ProductsProps) {
   return (
     <section>

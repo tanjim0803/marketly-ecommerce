@@ -1,8 +1,7 @@
-import { UUID } from "crypto";
 import { Category } from "./category";
 
 export interface Product {
-  id: UUID;
+  id: string;
   title: string;
   description: string;
   price: number;
@@ -10,6 +9,8 @@ export interface Product {
   slug: string;
   categories: Category[];
   image_url: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ProductApiResponse {

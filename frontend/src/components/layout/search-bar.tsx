@@ -3,18 +3,52 @@
 import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { resetFilters, setFilters } from "@/redux/features/productFilter";
+import { usePathname, useRouter } from "next/navigation";
 
 export function SearchBar({ className }: { className?: string }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const [searchText, setSearchText] = useState<string>("");
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchText(value);
+
+    // ইনপুট একদম খালি হয়ে গেলে স্বয়ংক্রিয়ভাবে ফিল্টার রিসেট করে সব প্রোডাক্ট দেখাবে
+    if (value.trim() === "") {
+      dispatch(setFilters({ title: "" }));
+    }
+  };
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // সার্চ সাবমিট করলে title আপডেট হবে
+    dispatch(resetFilters());
+    dispatch(setFilters({ title: searchText.trim() }));
+
+    // /shop পেজে না থাকলে রিডাইরেক্ট করবে
+    if (pathname !== "/shop") {
+      router.push("/shop");
+    }
+  };
+
   return (
     <form
       className={cn(
         "flex w-full items-center rounded-md border-2 border-ring bg-white p-0.5",
         className,
       )}
-      onSubmit={(e) => e.preventDefault()}
+      onSubmit={handleSearch}
       role="search"
     >
       <input
+        value={searchText}
+        onChange={handleInputChange}
         type="search"
         placeholder="Search for products..."
         aria-label="Search for products"

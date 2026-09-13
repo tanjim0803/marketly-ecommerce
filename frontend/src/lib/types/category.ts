@@ -1,7 +1,5 @@
-import { UUID } from "crypto";
-
 export interface Category {
-  id: UUID;
+  id: string;
   name: string;
   slug: string;
 }

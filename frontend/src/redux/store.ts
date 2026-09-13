@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { productApi } from "./services/productApi";
 import { categoryApi } from "./services/categoryApi";
+import productFilterReducer from "./features/productFilter";
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
+      productFilter: productFilterReducer,
       [productApi.reducerPath]: productApi.reducer,
       [categoryApi.reducerPath]: categoryApi.reducer,
     },

@@ -5,8 +5,7 @@ import { SlSocialFacebook, SlSocialYoutube } from "react-icons/sl";
 import { VscTwitter } from "react-icons/vsc";
 import { RxInstagramLogo } from "react-icons/rx";
 
-// import { categories } from "@/data/categories";
-import { mainNavLinks } from "@/components/layout/nav-links";
+import { mainNavLinks } from "@/lib/types/nav-links";
 import { NewsletterForm } from "@/components/layout/newsletter-form";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";

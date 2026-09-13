@@ -85,11 +85,11 @@ async def list_products(
     return await product_service.get_all_products(session, categories, limit, page)
 
 
-@product_router.get("/search")
+@product_router.get("/search", response_model=PaginatedProductOut)
 async def products_search(
     session: SessionDep,
     categories: list[str] | None = Query(default=None),
-    title: str = Query(default=None),
+    title: str | None = Query(default=None),
     description: str | None = Query(default=None),
     min_price: float | None = Query(default=None),
     max_price: float | None = Query(default=None),

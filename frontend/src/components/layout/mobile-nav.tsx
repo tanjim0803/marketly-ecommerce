@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { Menu } from "lucide-react";
 
-import { mainNavLinks } from "@/components/layout/nav-links";
-// import { categories } from "@/data/categories";
+import { mainNavLinks } from "@/lib/types/nav-links";
+
 import {
   Sheet,
   SheetContent,

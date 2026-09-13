@@ -20,7 +20,6 @@ export function LoadMore({
   const [extraProducts, setExtraProducts] = useState<Product[]>([]);
   const [totalPages, setTotalPages] = useState<number>(initialTotalPages);
 
-  // RTK Query Lazy Trigger Hook
   const [trigger, { isFetching }] = useLazyGetProductsQuery();
 
   const limit = 20;
@@ -49,7 +48,6 @@ export function LoadMore({
 
   return (
     <>
-      {/* নতুন লোড হওয়া প্রোডাক্টগুলো গ্রিডে রেন্ডার হবে */}
       {extraProducts.length > 0 && (
         <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {extraProducts.map((product) => (
@@ -58,7 +56,6 @@ export function LoadMore({
         </div>
       )}
 
-      {/* Load More Button */}
       {page < totalPages && (
         <div className="mt-10 flex justify-center">
           <Button

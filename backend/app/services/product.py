@@ -159,10 +159,10 @@ class ProductService:
         filters = []
 
         if title:
-            filters.append(Product.title.like(f"%{title}%"))
+            filters.append(Product.title.ilike(f"%{title}%"))
 
         if description:
-            filters.append(Product.description.like(f"%{description}%"))
+            filters.append(Product.description.ilike(f"%{description}%"))
 
         if min_price is not None:
             filters.append(Product.price >= min_price)

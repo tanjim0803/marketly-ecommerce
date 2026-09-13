@@ -29,14 +29,11 @@ export default async function FooterCategories() {
         Categories
       </h4>
 
-      {/* Error State */}
       {isError ? (
         <p className="text-xs text-destructive">Failed to load categories.</p>
       ) : categories.length === 0 ? (
-        /* Empty State */
         <p className="text-xs text-muted-foreground">No categories found.</p>
       ) : (
-        /* Success State */
         <ul className="space-y-2 text-sm text-muted-foreground">
           {categories.slice(0, 5).map((category) => (
             <li key={category.id}>

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { ChevronDown, Menu, Phone } from "lucide-react";
 // import { categories } from "@/data/categories";
 import { cn } from "@/lib/utils";
-import { mainNavLinks } from "@/components/layout/nav-links";
+import { mainNavLinks } from "@/lib/types/nav-links";
 
 export function NavBar() {
   const [showCategories, setShowCategories] = useState(false);

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const slides = [
   {
@@ -53,7 +54,7 @@ export function HeroCarousel() {
             {slide.subheading}
           </p>
           <Button size="lg" asChild>
-            <a href={slide.cta.href}>{slide.cta.label}</a>
+            <Link href={slide.cta.href}>{slide.cta.label}</Link>
           </Button>
         </div>
       </div>
@@ -66,7 +67,7 @@ export function HeroCarousel() {
             onClick={() => setActive(i)}
             className={cn(
               "size-3.5 rounded-full border border-secondary transition-colors",
-              i === active ? "bg-primary border-primary" : "bg-transparent"
+              i === active ? "bg-primary border-primary" : "bg-transparent",
             )}
           />
         ))}

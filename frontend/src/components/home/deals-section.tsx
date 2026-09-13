@@ -1,10 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getFeaturedDeals } from "@/data/mockProducts";
-import { formatPrice } from "@/lib/utils";
 
-export function DealsSection() {
-  const deals = getFeaturedDeals();
+export async function DealsSection() {
+  const deals: Array = [];
 
   return (
     <section>
@@ -38,11 +36,11 @@ export function DealsSection() {
               <div className="mt-auto flex items-baseline gap-2 pt-2">
                 {product.originalPrice && (
                   <span className="text-xs text-muted-foreground line-through">
-                    {formatPrice(product.originalPrice)}
+                    {/* {formatPrice(product.originalPrice)} */}
                   </span>
                 )}
                 <span className="font-heading text-lg font-bold text-primary">
-                  {formatPrice(product.price)}
+                  {/* {formatPrice(product.price)} */}
                 </span>
               </div>
             </div>
