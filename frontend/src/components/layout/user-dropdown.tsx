@@ -29,10 +29,10 @@ export default function UserDropdown() {
                 className="hidden items-center gap-2.5 rounded-full pl-1.5 pr-3 py-1.5 transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-primary lg:flex"
               >
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-xs ring-2 ring-primary/20">
-                  {user.username ? user.username[0].toUpperCase() : "U"}
+                  {user.name ? user.name[0].toUpperCase() : "U"}
                 </div>
                 <span className="hidden xl:inline-block text-sm font-medium text-foreground">
-                  {user.username || user.email?.split("@")[0]}
+                  {user.name?.split(" ")[0]}
                 </span>
                 <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
               </Button>

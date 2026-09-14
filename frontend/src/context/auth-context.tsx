@@ -7,14 +7,13 @@ import { useRouter } from "next/navigation";
 export interface User {
   id: string;
   email: string;
-  username: string;
+  name: string;
   role?: string;
 }
 
 interface LoginCredentials {
-  email?: string;
-  username?: string;
-  password?: string;
+  username: string;
+  password: string;
 }
 
 interface AuthContextType {

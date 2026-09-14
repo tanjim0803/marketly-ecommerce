@@ -38,7 +38,8 @@ class User(SQLModel, table=True):
     __tablename__ = "users"
 
     id: uuid.UUID | None = Field(primary_key=True, default_factory=uuid.uuid4)
-    email: EmailStr = Field(unique=True, max_length=255, nullable=False)
+    email: EmailStr = Field(unique=True, max_length=50, nullable=False)
+    name: str = Field(max_length=50, nullable=False)
     hash_password: str = Field(max_length=255, nullable=False)
     is_active: bool = Field(default=True)
     is_admin: bool = Field(default=False)

@@ -10,11 +10,13 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
+    name: str
     password: str
 
 
 class UserOut(UserBase):
     id: uuid.UUID
+    name: str
     model_config = {"from_attributes": True}
 
 
@@ -43,6 +45,7 @@ class PasswordChangeRequest(BaseModel):
 
 class PasswordResetEmailRequest(BaseModel):
     email: EmailStr
+
 
 class PasswordResetRequest(BaseModel):
     token: str
