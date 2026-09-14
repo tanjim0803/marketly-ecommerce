@@ -8,7 +8,7 @@ import Link from "next/link";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import LoginForm from "@/components/auth/login-form";
 
-export default function EyeCatchingLoginUI() {
+export default function LoginPage() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
 

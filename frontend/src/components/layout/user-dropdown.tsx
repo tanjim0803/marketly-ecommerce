@@ -42,7 +42,7 @@ export default function UserDropdown() {
           <DropdownMenuContent align="end" className="w-56 p-1.5 shadow-lg">
             <div className="px-2 py-2 mb-1 rounded-sm bg-muted/40">
               <p className="text-xs font-semibold text-foreground truncate">
-                {user.username || "Account"}
+                {user.name}
               </p>
               {user.email && (
                 <p className="text-[11px] text-muted-foreground truncate">
