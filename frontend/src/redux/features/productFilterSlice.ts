@@ -28,7 +28,6 @@ const productFilterSlice = createSlice({
       state,
       action: PayloadAction<Partial<ProductFilterQueryParams>>,
     ) => {
-      // যদি শুধুমাত্র page চেঞ্জ করা হয়, তবে আগের পেজ ১ এ রিসেট হবে না
       const isPageOnly =
         Object.keys(action.payload).length === 1 && "page" in action.payload;
 

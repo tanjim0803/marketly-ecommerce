@@ -14,10 +14,8 @@ import { Button } from "@/components/ui/button";
 export default function ShopProducts() {
   const dispatch = useDispatch();
 
-  // ১. Redux Store থেকে ফিল্টার স্টেট পড়া
   const filters = useSelector((state: RootState) => state.productFilter);
 
-  // ২. RTK Query ফেচিং
   const {
     data: apiData,
     isLoading,
@@ -31,10 +29,8 @@ export default function ShopProducts() {
   const currentPage = filters.page || 1;
   const limit = filters.limit || 20;
 
-  // মোট পেজ সংখ্যা হিসাব
   const totalPages = Math.ceil(totalItems / limit);
 
-  // পেজ পরিবর্তনের হ্যান্ডলার
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       dispatch(setFilters({ page: newPage }));
@@ -42,7 +38,6 @@ export default function ShopProducts() {
     }
   };
 
-  // এরর মেসেজ ফরম্যাটিং
   let errorMessage: string | null = null;
   if (isError && error) {
     errorMessage =
@@ -54,14 +49,12 @@ export default function ShopProducts() {
   return (
     <div className="relative min-h-[400px] flex flex-col justify-between">
       <div>
-        {/* Re-fetching indicator */}
         {isFetching && !isLoading && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/50 backdrop-blur-[1px]">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
         )}
 
-        {/* এরর স্টেট */}
         {errorMessage && (
           <div className="mb-6 flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive">
             <AlertCircle className="h-5 w-5 flex-shrink-0" />
@@ -69,7 +62,6 @@ export default function ShopProducts() {
           </div>
         )}
 
-        {/* লোডিং ও প্রোডাক্টস গ্রিড */}
         {isLoading ? (
           <div className="flex h-64 items-center justify-center">
             <ProductTabsSkeleton />
@@ -85,7 +77,6 @@ export default function ShopProducts() {
         )}
       </div>
 
-      {/* প্যাজিনেশন কন্ট্রোল */}
       {!isLoading && totalPages > 1 && (
         <div className="mt-8 flex items-center justify-between border-t pt-4">
           <p className="text-sm text-muted-foreground">
@@ -106,7 +97,6 @@ export default function ShopProducts() {
               Previous
             </Button>
 
-            {/* পেজ নম্বর বাটনসমূহ */}
             <div className="hidden sm:flex items-center gap-1">
               {Array.from({ length: totalPages }, (_, i) => i + 1)
                 .filter(

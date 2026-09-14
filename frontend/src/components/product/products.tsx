@@ -63,7 +63,6 @@ async function ProductsContent({ searchParams }: ProductsProps) {
     }`;
   }
 
-  console.log(apiData);
   const items = apiData?.items || [];
   const totalPages = apiData
     ? Math.ceil(apiData.total / (apiData.limit || limit))

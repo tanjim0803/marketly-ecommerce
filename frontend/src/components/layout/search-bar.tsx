@@ -18,7 +18,6 @@ export function SearchBar({ className }: { className?: string }) {
     const value = e.target.value;
     setSearchText(value);
 
-    // ইনপুট একদম খালি হয়ে গেলে স্বয়ংক্রিয়ভাবে ফিল্টার রিসেট করে সব প্রোডাক্ট দেখাবে
     if (value.trim() === "") {
       dispatch(setFilters({ title: "" }));
     }
@@ -27,11 +26,9 @@ export function SearchBar({ className }: { className?: string }) {
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // সার্চ সাবমিট করলে title আপডেট হবে
     dispatch(resetFilters());
     dispatch(setFilters({ title: searchText.trim() }));
 
-    // /shop পেজে না থাকলে রিডাইরেক্ট করবে
     if (pathname !== "/shop") {
       router.push("/shop");
     }

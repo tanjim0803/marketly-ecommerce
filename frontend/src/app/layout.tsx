@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import StoreProvider from "@/redux/provider";
+import { AuthProvider } from "@/context/auth-context";
 
 const lato = Lato({
   subsets: ["latin"],
@@ -37,9 +38,11 @@ export default function RootLayout({
     >
       <body className="--font-sans flex min-h-full flex-col bg-background text-foreground">
         <StoreProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <AuthProvider>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </AuthProvider>
         </StoreProvider>
       </body>
     </html>

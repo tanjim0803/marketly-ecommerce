@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
 from fastapi.responses import JSONResponse
 from app.database.session import SessionDep
 from app.database.models import User
@@ -152,16 +152,30 @@ async def admin(user: Annotated[User, Depends(require_admin)]):
 
 @user_router.post("/logout")
 async def logout(
-    session: SessionDep, request: Request, user: Annotated[User, get_current_user]
+    request: Request,
+    response: Response,
+    session: SessionDep,
+    user: User = Depends(get_current_user),
 ):
     refresh_token = request.cookies.get("refresh_token")
 
     if refresh_token:
         await revoke_refresh_token(session, refresh_token)
 
-    response = JSONResponse(content={"detail": "Logged out"})
+    response.delete_cookie(
+        key="access_token",
+        path="/",
+        httponly=True,
+        samesite="lax",
+        secure=False,
+    )
 
-    response.delete_cookie("refresh_token")
-    response.delete_cookie("access_token")
+    response.delete_cookie(
+        key="refresh_token",
+        path="/",
+        httponly=True,
+        samesite="lax",
+        secure=False,
+    )
 
-    return response
+    return {"detail": "Logged out successfully"}

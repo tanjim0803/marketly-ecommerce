@@ -42,7 +42,6 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
               key={item.id}
               className="group overflow-hidden rounded-xl border bg-card transition-all duration-300 hover:shadow-md flex flex-col justify-between"
             >
-              {/* Product Image & Badges */}
               <div className="relative aspect-square w-full overflow-hidden bg-muted/20">
                 <Image
                   src={item.image_url || "/placeholder.svg"}
@@ -52,7 +51,6 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
                   className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
                 />
 
-                {/* Categories / Stock Overlay */}
                 <div className="absolute top-3 left-3 flex flex-col gap-1 z-10">
                   {isOutOfStock ? (
                     <Badge
@@ -73,7 +71,6 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
                   )}
                 </div>
 
-                {/* Quick Action Overlay Buttons */}
                 <div className="absolute top-3 right-3 flex flex-col gap-1.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100 z-10">
                   <Button
                     variant="secondary"
@@ -97,7 +94,6 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
                 </div>
               </div>
 
-              {/* Card Body */}
               <CardContent className="p-4 flex-1 flex flex-col justify-between">
                 <div>
                   <Link href={`/products/${item.slug}`}>
@@ -122,7 +118,6 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
                 </div>
               </CardContent>
 
-              {/* Card Footer Action */}
               <CardFooter className="p-4 pt-0">
                 <Button
                   disabled={isOutOfStock}

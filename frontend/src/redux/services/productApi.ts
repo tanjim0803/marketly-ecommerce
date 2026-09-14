@@ -15,7 +15,6 @@ export const productApi = createApi({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
   }),
   endpoints: (builder) => ({
-    // টাইপ প্যারামিটার ঠিক করা হয়েছে: <Response, QueryArg>
     getProducts: builder.query<
       ProductApiResponse,
       ProductFilterQueryParams | void
@@ -33,7 +32,6 @@ export const productApi = createApi({
 
         const queryParams = new URLSearchParams();
 
-        // Multiple categories support
         const validCategories = categories?.filter(
           (cat: string) => cat && cat !== "all",
         );
@@ -43,7 +41,6 @@ export const productApi = createApi({
           );
         }
 
-        // Optional Search & Filter fields
         if (title?.trim()) queryParams.append("title", title.trim());
         if (description?.trim())
           queryParams.append("description", description.trim());
@@ -52,7 +49,6 @@ export const productApi = createApi({
         if (maxPrice !== undefined && String(maxPrice) !== "")
           queryParams.append("max_price", maxPrice.toString());
 
-        // Pagination
         queryParams.append("limit", limit.toString());
         queryParams.append("page", page.toString());
 
@@ -65,4 +61,8 @@ export const productApi = createApi({
   }),
 });
 
-export const { useGetProductsQuery, useLazyGetProductsQuery, useGetProductBySlugQuery } = productApi;
+export const {
+  useGetProductsQuery,
+  useLazyGetProductsQuery,
+  useGetProductBySlugQuery,
+} = productApi;

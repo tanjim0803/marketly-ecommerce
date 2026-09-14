@@ -44,7 +44,6 @@ export default function ProductDetails({
     }
   };
 
-  // 1. Loading State (Skeleton UI)
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8 md:py-12">
@@ -62,7 +61,6 @@ export default function ProductDetails({
     );
   }
 
-  // 2. Error / Product Not Found State
   if (isError || !product) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
@@ -80,11 +78,9 @@ export default function ProductDetails({
     );
   }
 
-  // 3. Main Product Details View
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
-        {/* Left Side: Product Image View */}
         <div className="flex flex-col gap-4">
           <div className="relative aspect-square w-full overflow-hidden rounded-xl border bg-muted/30 shadow-sm">
             <Image
@@ -108,10 +104,8 @@ export default function ProductDetails({
           </div>
         </div>
 
-        {/* Right Side: Product Details */}
         <div className="flex flex-col justify-between">
           <div className="space-y-6">
-            {/* Categories & Actions */}
             <div className="flex items-center justify-between gap-2">
               <div className="flex flex-wrap gap-1.5">
                 {product.categories?.map((cat) => (
@@ -127,7 +121,6 @@ export default function ProductDetails({
               </div>
             </div>
 
-            {/* Title & Price */}
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
                 {product.title}
@@ -139,7 +132,6 @@ export default function ProductDetails({
               </div>
             </div>
 
-            {/* Stock Status Indicator */}
             <div className="flex items-center gap-2">
               {!isOutOfStock ? (
                 <>
@@ -160,7 +152,6 @@ export default function ProductDetails({
 
             <Separator />
 
-            {/* Description */}
             <div className="space-y-2">
               <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                 Description
@@ -172,7 +163,6 @@ export default function ProductDetails({
 
             <Separator />
 
-            {/* Quantity Selector & Actions */}
             {!isOutOfStock && (
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
@@ -219,7 +209,6 @@ export default function ProductDetails({
               </div>
             )}
 
-            {/* Feature Highlights Card */}
             <Card className="bg-muted/30 border-dashed">
               <CardContent className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-3">
                 <div className="flex items-center gap-3">

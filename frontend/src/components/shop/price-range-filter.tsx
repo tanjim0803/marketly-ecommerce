@@ -42,23 +42,18 @@ export function PriceRangeFilter({
   const handleApplyFilter = () => {
     dispatch(setFilters({ minPrice: minVal, maxPrice: maxVal }));
   };
-  console.log(filterValues);
 
   return (
     <Card className="p-6">
-      {/* হেডার */}
       <div className="mb-6 border-b-2 border-primary pb-3">
         <h3 className="font-heading text-lg font-bold text-secondary">
           Price Range
         </h3>
       </div>
 
-      {/* স্লাইডার কনটেইনার */}
       <div className="relative mb-6 pt-2 pb-2">
-        {/* ব্যাকগ্রাউন্ড ট্র্যাক */}
         <div className="h-2 rounded-md bg-secondary/10 w-full absolute top-1/2 -translate-y-1/2" />
 
-        {/* প্রাইমারি কালারের একটিভ ফিল্ড */}
         <div
           className="h-2 rounded-md bg-primary absolute top-1/2 -translate-y-1/2"
           style={{
@@ -67,7 +62,6 @@ export function PriceRangeFilter({
           }}
         />
 
-        {/* মাইনাস (Min) রেঞ্জ ইনপুট */}
         <input
           type="range"
           min={minPrice}
@@ -78,7 +72,6 @@ export function PriceRangeFilter({
           className="pointer-events-none absolute top-1/2 -translate-y-1/2 z-30 h-2 w-full appearance-none bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary [&::-webkit-slider-thumb]:bg-background [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:shadow-md cursor-pointer"
         />
 
-        {/* ম্যাক্স (Max) রেঞ্জ ইনপুট */}
         <input
           type="range"
           min={minPrice}
@@ -90,7 +83,6 @@ export function PriceRangeFilter({
         />
       </div>
 
-      {/* প্রাইস ভ্যালু ও ফিল্টার বাটন */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
           <span>Price:</span>
